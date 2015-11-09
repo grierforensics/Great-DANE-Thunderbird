@@ -1,0 +1,13 @@
+<!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.--><?xml version="1.0"?>
+<?xml-stylesheet href="chrome://greatdane/skin/overlay.css" type="text/css" ?>
+<overlay id="messengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="overlay.js" />
+  <toolbarpalette id="MailToolbarPalette">
+    <toolbarbutton id="greatdane-button"
+      class="greatdane-button toolbarbutton-1"
+      label="Greatdane"
+      type="button"
+      oncommand="GreatdaneOverlay.click();"
+      />
+  </toolbarpalette>
+</overlay>
