@@ -20,13 +20,15 @@ var GreatdaneOverlay = {
   },
 
   test: function(){
-    var obj = Greatdane.getEmailsForCurrentMessage();
-    console.logStringMessage("getEmailsForCurrentMessage:"+JSON.stringify(obj));
+    //var obj = Greatdane.getEmailsForCurrentMessage();
+    //console.logStringMessage("getEmailsForCurrentMessage:"+JSON.stringify(obj));
 
-    Greatdane.getCertsForEmailAddresses(['danetest@had-pilot.biz'], function (certs) {
-      console.logStringMessage("getCertsForEmailAddresses:"+JSON.stringify(obj));
-      for each(var cert in certs){
-        Greatdane.addCertificate(cert, 'C,c,c');
+    Greatdane.getCertsForEmailAddresses(['danetest@had-pilot.biz'], function (certsForEmails) {
+      for each(var entry in certsForEmails){
+        console.logStringMessage("adding " + entry.certs.length + " certs for email:" + entry.email);
+        for each(var cert in entry.certs){
+          Greatdane.addCertificate(cert, 'C,c,c');
+        }
       }
     });
   }

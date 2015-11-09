@@ -1,5 +1,6 @@
-<!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.--><?xml version="1.0"?>
+<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://greatdane/skin/overlay.css" type="text/css" ?>
+<!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.-->
 <overlay id="messengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="overlay.js" />
   <toolbarpalette id="MailToolbarPalette">
