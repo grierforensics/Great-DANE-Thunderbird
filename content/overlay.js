@@ -3,7 +3,7 @@ Components.utils.import("resource:///modules/gloda/index_msg.js");
 Components.utils.import("resource:///modules/gloda/mimemsg.js");
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
-//Components.utils.import("resource://gre/modules/devtools/Console.jsm");
+
 var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 
 
@@ -13,7 +13,7 @@ Components.utils.import("resource://greatdane/greatdane.js");
 var GreatdaneOverlay = {
   click: function(){
     if (document.readyState === "complete") {
-      //document.getElementById("tabmail").openTab("chromeTab", {chromePage: "chrome://greatdane/content/index.html" });
+      //this.openTab("chrome://greatdane/content/index.html");
 
       this.test();
     }
@@ -31,6 +31,10 @@ var GreatdaneOverlay = {
         }
       }
     });
+  },
+
+  openTab: function(page){
+    document.getElementById("tabmail").openTab("chromeTab", {chromePage: page });
   }
 };
 
