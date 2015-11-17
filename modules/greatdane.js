@@ -45,12 +45,13 @@ var Greatdane = {
 
   getCertsForEmailAddresses: function (emailAddresses, callback) {
     for each(var emailAddress in emailAddresses) {
-      ajax('GET', 'http://' + hostAndPort + '/toolset/' + encodeURIComponent(emailAddress) + '/base64', null, function (responseText) {
-        console.logStringMessage("dane lookup. email="+emailAddresses+" result=" + responseText);//debug
+      var scrubbed = scrubEmailAddress(emailAddress);
+      ajax('GET', 'http://' + hostAndPort + '/toolset/' + encodeURIComponent(scrubbed) + '/base64', null, function (responseText) {
+        console.logStringMessage("dane lookup. email="+scrubbed+" result=" + responseText);//debug
         let certs = JSON.parse(responseText);
-        callback && callback([{email: emailAddress, certs: certs}]);
+        callback && callback([{email: scrubbed, certs: certs}]);
       }, function (responseText) {
-        console.logStringMessage("dane lookup ERROR. email="+emailAddresses+" result=" + responseText);//debug
+        console.logStringMessage("dane lookup ERROR. email="+scrubbed+" result=" + responseText);//debug
       });
     }
   },
@@ -67,6 +68,10 @@ var Greatdane = {
   }
 };
 
+
+function scrubEmailAddress(emailAddress) {
+  return emailAddress.replace(/.*?</, "").replace(/>.*?/, "");
+}
 
 function openTab(aUrl) {
   let tabmail = getMail3Pane().document.getElementById("tabmail");
