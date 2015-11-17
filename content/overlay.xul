@@ -2,7 +2,9 @@
 <?xml-stylesheet href="chrome://greatdane/skin/overlay.css" type="text/css" ?>
 <!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.-->
 <overlay id="messengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
   <script type="application/x-javascript" src="overlay.js" />
+
   <toolbarpalette id="MailToolbarPalette">
     <toolbarbutton id="greatdane-button"
       class="greatdane-button toolbarbutton-1"
@@ -11,4 +13,14 @@
       oncommand="GreatdaneOverlay.click();"
       />
   </toolbarpalette>
+
+  <vbox id="addresses-box" >
+    <hbox id="box-to" >
+      <vbox flex="1">
+        <textbox id="msgTO"
+                 onkeypress="GreatdaneOverlay.processPartialTextbox(this)"
+                 onblur="GreatdaneOverlay.processPartialTextbox(this)" />
+      </vbox>
+    </hbox>
+  </vbox>
 </overlay>
