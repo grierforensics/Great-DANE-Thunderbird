@@ -1,19 +1,38 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://greatdane/skin/overlay.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://greatdane/skin/toolbar-button.css" type="text/css" ?>
 <!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.-->
 <overlay id="messengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-  <script type="application/x-javascript" src="overlay.js" />
+  <script type="application/x-javascript" src="chrome://greatdane/content/overlay.js" />
 
   <toolbarpalette id="MailToolbarPalette">
     <toolbarbutton id="greatdane-button"
       class="greatdane-button toolbarbutton-1"
-      label="Greatdane"
+      label="GreatDANE"
       type="button"
-      oncommand="GreatdaneOverlay.click();"
-      />
+      oncommand="GreatdaneOverlay.click();">
+    </toolbarbutton>
   </toolbarpalette>
 
+  <!-- Toolbar button with Menu example -->
+  <!--
+  <toolbarpalette id="MsgComposeToolbarPalette">
+    <toolbarbutton id="greatdane-button"
+      class="greatdane-button toolbarbutton-1"
+      label="GreatDANE"
+      type="menu-button"
+      oncommand="GreatdaneOverlay.click();"
+      >
+        <menupopup>
+            <menuitem label="Get Certs" id="greatdane-button-getcerts"
+                oncommand="GreatdaneOverlay.click();"
+                />
+        </menupopup>
+    </toolbarbutton>
+  </toolbarpalette>
+  -->
+
+  <!-- Temporarily disable -->
+  <!--
   <vbox id="addresses-box" >
     <hbox id="box-to" >
       <vbox flex="1">
@@ -23,4 +42,5 @@
       </vbox>
     </hbox>
   </vbox>
+  -->
 </overlay>

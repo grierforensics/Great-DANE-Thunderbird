@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="email-dialog" title="Email Input"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept,cancel"
+        ondialogaccept="return doOK();"
+        ondialogcancel="return doCancel();">
+
+        <vbox>
+            <label control="email-input" value="Enter an email address:"/>
+            <textbox id="email-input" placeholder="foo@example.org"/>
+        </vbox>
+
+<script type="application/x-javascript" src="chrome://greatdane/content/overlay.js" />
+
+</dialog>

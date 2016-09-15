@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="certs-dialog" title="Certificates"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept"
+        onload="onLoad();"
+        ondialogaccept="return onOK();">
+
+        <vbox>
+            <label control="certs-output" value="Certificates:"/>
+            <textbox id="certs-output" readonly="true" multiline="true" cols="80" rows="40" />
+        </vbox>
+
+<script type="application/x-javascript" src="chrome://greatdane/content/certsDialog.js" />
+
+</dialog>

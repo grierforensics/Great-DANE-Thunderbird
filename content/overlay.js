@@ -2,7 +2,7 @@
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
-const Cu = Cu;
+const Cu = Components.utils;
 
 Cu.import("resource:///modules/gloda/index_msg.js");
 Cu.import("resource:///modules/gloda/mimemsg.js");
@@ -14,15 +14,49 @@ var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Com
 var emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 var session = {};
 
+
+function doOK() {
+    var emailAddress = document.getElementById("email-input").value;
+    //alert("You pressed OK! (" + emailAddress + ")");
+    Greatdane.getCertsForEmailAddress(emailAddress,
+        function (certs, address) {
+            //alert("Found certs for " + address + ": " + certs);
+            console.logStringMessage("Found certs for " + address + ": " + certs);
+
+            let mainWindow = GreatdaneOverlay.getMail3Pane();
+            let dialog = mainWindow.openDialog("chrome://greatdane/content/certs.xul",
+                "certs", "chrome,centerscreen", {certificates: certs});
+            dialog.focus();
+            // mainWindow.openDialog("chrome://greatdane/content/certs.xul", "certs", "chrome");
+            // let tabmail = mainWindow.document.getElementById("tabmail");
+            // tabmail.openTab("chromeTab", {chromePage: "chrome://greatdane/content/index.html"});
+        },
+        function (responseText, address) {
+            //alert("Error: " + responseText);
+            console.logStringMessage("Error: " + responseText);
+        });
+    return true;
+}
+
+function doCancel() {
+    return true;
+}
+
+
 var GreatdaneOverlay = {
 
   click: function () {
+    console.logStringMessage("GreatDANE button clicked!");
     if (document.readyState === "complete") {
-      var emailAddresses = this.getEmailsForCurrentMessage();
-      for each(var emailAddress in emailAddresses) {
-        this.processEmailAddress(emailAddress);
-      }
-      //this.openTab("chrome://greatdane/content/index.html"); //index shows cert output
+
+        let dialog = window.openDialog("chrome://greatdane/content/email.xul", "email", "chrome,centerscreen");
+        dialog.focus();
+      // console.logStringMessage("Getting emails for current message");
+      // var emailAddresses = this.getEmailsForCurrentMessage();
+      // for each(var emailAddress in emailAddresses) {
+      //   this.processEmailAddress(emailAddress);
+      // }
+      // this.openTab("chrome://greatdane/content/index.html"); //index shows cert output
     }
   },
 
@@ -98,15 +132,37 @@ var GreatdaneOverlay = {
   },
 
   openTab: function (page) {
-    document.getElementById("tabmail").openTab("chromeTab", {chromePage: page});
+    // Borrowed from https://github.com/protz/LatexIt/blob/master/content/firstrun.js
+    var tabmail = document.getElementById("tabmail");
+    if (tabmail && 'openTab' in tabmail) {
+        Components.classes['@mozilla.org/appshell/window-mediator;1'].
+          getService(Ci.nsIWindowMediator).
+          getMostRecentWindow("mail:3pane").
+          document.getElementById("tabmail").
+          //openTab("contentTab", {contentPage: page});
+          openTab("chromeTab", {chromePage: page});
+    } else {
+        //openDialog(page, "", "width=640,height=480");
+        console.logStringMessage("Can't open new tab from here");
+    }
   }
 }
 
+/*
+ * Commented by JN 2016-09-15 due to Thunderbird console error:
+ *  Error: TypeError: document.getElementById(...) is null
+ */
+/*
 window.addEventListener("load", function _overlay_eventListener() {
   // Fixup.
   document.getElementById("dummychromebrowser").setAttribute("tooltip", "aHTMLTooltip");
 }, false);
+*/
 
+/*
+ * Temporarily disabled while working on interactive certificate retrieval
+ */
+/*
 window.addEventListener('load', function _setup_greatdate_eventlisteners() {
   var newMailListener = {
     msgAdded: function (msgHdr) {
@@ -118,3 +174,4 @@ window.addEventListener('load', function _setup_greatdate_eventlisteners() {
   var notificationService = Components.classes["@mozilla.org/messenger/msgnotificationservice;1"].getService(Components.interfaces.nsIMsgFolderNotificationService);
   notificationService.addListener(newMailListener, notificationService.msgAdded);
 }, false);
+*/

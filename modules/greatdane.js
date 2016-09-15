@@ -15,9 +15,12 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 Cu.import("resource:///modules/gloda/index_msg.js");
 Cu.import("resource:///modules/gloda/mimemsg.js");
 
-const hostAndPort = 'localhost:7777';
 //const hostAndPort = 'dst.grierforensics.com';
+//const hostAndPort = 'localhost:7777';
+const apiEndpoint = "http://localhost:47036/"
+
 const CERT_TRUST = "C,C,C";
+
 var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 
 var Greatdane = {
@@ -25,8 +28,9 @@ var Greatdane = {
    * Fetches dane certs from configured dst webapp. callback will be passed an array of results
    */
   getCertsForEmailAddress: function (emailAddress, success, failure) {
-    ajax('GET', 'http://' + hostAndPort + '/toolset/' + encodeURIComponent(emailAddress) + '/base64', null, function (responseText) {
-      //console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
+    console.logStringMessage("Performing AJAX request!");
+    ajax('GET', apiEndpoint + encodeURIComponent(emailAddress) + '/text', null, function (responseText) {
+      console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
       let certs = JSON.parse(responseText);
       success && success(certs, emailAddress);
     }, function (responseText) {
