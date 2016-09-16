@@ -2,7 +2,7 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = ['Greatdane']
+var EXPORTED_SYMBOLS = ['GreatDANE']
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
@@ -19,17 +19,32 @@ Cu.import("resource:///modules/gloda/mimemsg.js");
 //const hostAndPort = 'localhost:7777';
 const apiEndpoint = "http://localhost:47036/"
 
-const CERT_TRUST = "C,C,C";
+// The only docs I've found on this "trust string" is the source code itself (addCertFromBase64):
+// https://dxr.mozilla.org/comm-central/source/mozilla/security/manager/ssl/nsIX509CertDB.idl#418
+//
+// The string must consist of 3 comma-separated character flags, corresponding to:
+// 1. SSL Trust
+// 2. Email Trust
+// 3. Object Signing Trust
+//
+// The character flags can be identified here (CERT_DecodeTrustString):
+// https://dxr.mozilla.org/comm-central/source/mozilla/security/nss/lib/certdb/certdb.c#2267
+//
+// The 'C' flag, for example, means "Trusted CA and Valid CA". This is the only one found in online examples.
+//
+// We want the 'u' flag, which means "User", and only for Email trust.
+const CERT_TRUST = ",Pu,";
 
-var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 
-var Greatdane = {
+var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+
+var GreatDANE = {
   /**
    * Fetches dane certs from configured dst webapp. callback will be passed an array of results
    */
   getCertsForEmailAddress: function (emailAddress, success, failure) {
     console.logStringMessage("Performing AJAX request!");
-    ajax('GET', apiEndpoint + encodeURIComponent(emailAddress) + '/text', null, function (responseText) {
+    ajax('GET', apiEndpoint + encodeURIComponent(emailAddress) + '/pem', null, function (responseText) {
       console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
       let certs = JSON.parse(responseText);
       success && success(certs, emailAddress);
@@ -39,21 +54,40 @@ var Greatdane = {
   },
 
   addCertificate: function (base64cert) {
-    var certdb = Components.classes["@mozilla.org/security/x509certdb;1"].getService(Components.interfaces.nsIX509CertDB);
+    // https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
+    var certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
     var certdb2 = certdb;
     try {
-      certdb2 = Components.classes["@mozilla.org/security/x509certdb;1"].getService(Components.interfaces.nsIX509CertDB2);
+      certdb2 = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB2);
     } catch (e) {
     }
     console.logStringMessage("addCertificate:" + base64cert);
-    certdb2.addCertFromBase64(base64cert, CERT_TRUST, "");
+
+    var beginCert = "-----BEGIN CERTIFICATE-----";
+    var endCert = "-----END CERTIFICATE-----";
+
+    base64cert = base64cert.replace(/[\r\n]/g, "");
+    var begin = base64cert.indexOf(beginCert);
+    var end = base64cert.indexOf(endCert);
+    var cert = base64cert.substring(begin + beginCert.length, end)
+    certdb2.addCertFromBase64(cert, CERT_TRUST, "");
   }
 };
 
+/*
+function hexToAscii(hexIn) {
+  let hex = hexIn.toString();
+  var str = "";
+  for (c = 0; c < hex.length; c += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(c, 2), 16));
+  }
+  return str;
+}
+*/
 
 function ajax(method, url, args, onload, onerror) {
   // Instantiates the XMLHttpRequest
-  var client = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
+  var client = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
 
   var uri = url;
 

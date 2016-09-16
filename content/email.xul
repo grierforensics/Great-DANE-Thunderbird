@@ -4,14 +4,14 @@
 <dialog id="email-dialog" title="Email Input"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         buttons="accept,cancel"
-        ondialogaccept="return doOK();"
-        ondialogcancel="return doCancel();">
+        ondialogaccept="return onOK();"
+        ondialogcancel="return onCancel();">
 
         <vbox>
             <label control="email-input" value="Enter an email address:"/>
             <textbox id="email-input" placeholder="foo@example.org"/>
         </vbox>
 
-<script type="application/x-javascript" src="chrome://greatdane/content/overlay.js" />
+<script type="application/x-javascript" src="chrome://greatdane/content/emailDialog.js" />
 
 </dialog>

@@ -10,37 +10,9 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/NetUtil.jsm");
 Cu.import("resource://greatdane/greatdane.js");
 
-var console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 var emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 var session = {};
-
-
-function doOK() {
-    var emailAddress = document.getElementById("email-input").value;
-    //alert("You pressed OK! (" + emailAddress + ")");
-    Greatdane.getCertsForEmailAddress(emailAddress,
-        function (certs, address) {
-            //alert("Found certs for " + address + ": " + certs);
-            console.logStringMessage("Found certs for " + address + ": " + certs);
-
-            let mainWindow = GreatdaneOverlay.getMail3Pane();
-            let dialog = mainWindow.openDialog("chrome://greatdane/content/certs.xul",
-                "certs", "chrome,centerscreen", {certificates: certs});
-            dialog.focus();
-            // mainWindow.openDialog("chrome://greatdane/content/certs.xul", "certs", "chrome");
-            // let tabmail = mainWindow.document.getElementById("tabmail");
-            // tabmail.openTab("chromeTab", {chromePage: "chrome://greatdane/content/index.html"});
-        },
-        function (responseText, address) {
-            //alert("Error: " + responseText);
-            console.logStringMessage("Error: " + responseText);
-        });
-    return true;
-}
-
-function doCancel() {
-    return true;
-}
 
 
 var GreatdaneOverlay = {
@@ -66,11 +38,11 @@ var GreatdaneOverlay = {
       return;//bad email or already tried
     }
 
-    Greatdane.getCertsForEmailAddress(scrubbed, function (certs) {
+    GreatDANE.getCertsForEmailAddress(scrubbed, function (certs) {
       session[scrubbed] = true;
       console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + scrubbed);
       for each(var cert in certs) {
-        Greatdane.addCertificate(cert, 'C,c,c');
+        GreatDANE.addCertificate(cert);
       }
     }, function (responseText) {
       session[scrubbed] = false;
@@ -84,11 +56,11 @@ var GreatdaneOverlay = {
       return;//bad email or already tried
     }
 
-    Greatdane.getCertsForEmailAddress(scrubbed, function (certs) {
+    GreatDANE.getCertsForEmailAddress(scrubbed, function (certs) {
       session[scrubbed] = true;
       console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + emailAddress);
       for each(var cert in certs) {
-        Greatdane.addCertificate(cert, 'C,c,c');
+        GreatDANE.addCertificate(cert);
       }
     }, function (responseText) {
       session[scrubbed] = false;
@@ -135,7 +107,7 @@ var GreatdaneOverlay = {
     // Borrowed from https://github.com/protz/LatexIt/blob/master/content/firstrun.js
     var tabmail = document.getElementById("tabmail");
     if (tabmail && 'openTab' in tabmail) {
-        Components.classes['@mozilla.org/appshell/window-mediator;1'].
+        Cc['@mozilla.org/appshell/window-mediator;1'].
           getService(Ci.nsIWindowMediator).
           getMostRecentWindow("mail:3pane").
           document.getElementById("tabmail").
@@ -171,7 +143,7 @@ window.addEventListener('load', function _setup_greatdate_eventlisteners() {
       }
     }
   };
-  var notificationService = Components.classes["@mozilla.org/messenger/msgnotificationservice;1"].getService(Components.interfaces.nsIMsgFolderNotificationService);
+  var notificationService = Cc["@mozilla.org/messenger/msgnotificationservice;1"].getService(Ci.nsIMsgFolderNotificationService);
   notificationService.addListener(newMailListener, notificationService.msgAdded);
 }, false);
 */
