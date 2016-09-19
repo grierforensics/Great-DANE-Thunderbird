@@ -11,8 +11,6 @@ Cu.import("resource://gre/modules/NetUtil.jsm");
 Cu.import("resource://greatdane/greatdane.js");
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-var emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-var session = {};
 
 
 var GreatdaneOverlay = {
@@ -21,61 +19,8 @@ var GreatdaneOverlay = {
     console.logStringMessage("GreatDANE button clicked!");
     if (document.readyState === "complete") {
 
-        let dialog = window.openDialog("chrome://greatdane/content/email.xul", "email", "chrome,centerscreen");
-        dialog.focus();
-      // console.logStringMessage("Getting emails for current message");
-      // var emailAddresses = this.getEmailsForCurrentMessage();
-      // for each(var emailAddress in emailAddresses) {
-      //   this.processEmailAddress(emailAddress);
-      // }
-      // this.openTab("chrome://greatdane/content/index.html"); //index shows cert output
-    }
-  },
-
-  processEmailAddress: function (emailAddress) {
-    var scrubbed = this.scrubEmailAddress(emailAddress);
-    if (!scrubbed || scrubbed in session) {
-      return;//bad email or already tried
-    }
-
-    GreatDANE.getCertsForEmailAddress(scrubbed, function (certs) {
-      session[scrubbed] = true;
-      console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + scrubbed);
-      for each(var cert in certs) {
-        GreatDANE.addCertificate(cert);
-      }
-    }, function (responseText) {
-      session[scrubbed] = false;
-      console.logStringMessage("DANE lookup ERROR. email=" + scrubbed + " result=" + responseText);//debug
-    });
-  },
-
-  processPartialEmailAddress: function (emailAddresses) {
-    var scrubbed = this.scrubEmailAddress(emailAddress);
-    if (!scrubbed || scrubbed in session) {
-      return;//bad email or already tried
-    }
-
-    GreatDANE.getCertsForEmailAddress(scrubbed, function (certs) {
-      session[scrubbed] = true;
-      console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + emailAddress);
-      for each(var cert in certs) {
-        GreatDANE.addCertificate(cert);
-      }
-    }, function (responseText) {
-      session[scrubbed] = false;
-      /*remove this*/
-      console.logStringMessage("partial DANE lookup ERROR. email=" + emailAddress + " result=" + responseText);//debug
-    });
-  },
-
-  processPartialTextbox: function (element) {
-    var value = element.inputField.value;
-    if (!value)
-      return;
-
-    for each(var partial in value.split(',')) {
-      this.processPartialEmailAddress(partial);
+      let dialog = window.openDialog("chrome://greatdane/content/email.xul", "email", "chrome,centerscreen");
+      dialog.focus();
     }
   },
 
@@ -91,31 +36,23 @@ var GreatdaneOverlay = {
 
   getMail3Pane: function () {
     return Cc["@mozilla.org/appshell/window-mediator;1"]
-        .getService(Ci.nsIWindowMediator)
-        .getMostRecentWindow("mail:3pane");
-  },
-
-  scrubEmailAddress: function (emailAddress) {
-    if (!emailAddress || emailAddress.length <= 6)
-      return null;
-
-    var result = emailAddress.replace(/.*?</, "").replace(/>.*?/, "").trim();
-    return emailRegex.test(result) ? result : null;
+      .getService(Ci.nsIWindowMediator)
+      .getMostRecentWindow("mail:3pane");
   },
 
   openTab: function (page) {
     // Borrowed from https://github.com/protz/LatexIt/blob/master/content/firstrun.js
     var tabmail = document.getElementById("tabmail");
     if (tabmail && 'openTab' in tabmail) {
-        Cc['@mozilla.org/appshell/window-mediator;1'].
-          getService(Ci.nsIWindowMediator).
-          getMostRecentWindow("mail:3pane").
-          document.getElementById("tabmail").
-          //openTab("contentTab", {contentPage: page});
-          openTab("chromeTab", {chromePage: page});
+      Cc['@mozilla.org/appshell/window-mediator;1'].
+        getService(Ci.nsIWindowMediator).
+        getMostRecentWindow("mail:3pane").
+        document.getElementById("tabmail").
+        //openTab("contentTab", {contentPage: page});
+        openTab("chromeTab", {chromePage: page});
     } else {
-        //openDialog(page, "", "width=640,height=480");
-        console.logStringMessage("Can't open new tab from here");
+      //openDialog(page, "", "width=640,height=480");
+      console.logStringMessage("Can't open new tab from here");
     }
   }
 }
@@ -126,34 +63,36 @@ var GreatdaneOverlay = {
  */
 /*
 window.addEventListener("load", function _overlay_eventListener() {
-  // Fixup.
+// Fixup.
   document.getElementById("dummychromebrowser").setAttribute("tooltip", "aHTMLTooltip");
 }, false);
 */
 
-/*
- * Temporarily disabled while working on interactive certificate retrieval
- */
-/*
+
+// Once the window has loaded, add a "new message" listener that checks
+// if the new message is signed (S/MIME), and, if so, retrieves certificates
+// for the sender.
 window.addEventListener('load', function _setup_greatdate_eventlisteners() {
   var newMailListener = {
     msgAdded: function (msgHdr) {
-      if (!msgHdr.isRead) {
-        //GreatdaneOverlay.processEmailAddress(msgHdr.author);
-      }
-
-        let enumerator = msgHdr.propertyEnumerator;
-        let properties = "";
-        while (enumerator.hasMore()) {
-            let property = enumerator.getNext();
-            properties += property + ": " + msgHdr.getProperty(property);
+      MsgHdrToMimeMessage(msgHdr, null, function (aMsgHdr, aMimeMsg) {
+        //console.logStringMessage("headers: " + JSON.stringify(aMimeMsg.headers), null, 2);
+        if (aMimeMsg.has("content-type")) {
+          let contentType = aMimeMsg.getAll("content-type");
+          // contentType is an array, but the regex will still match
+          // borrowed from: msgHdrViewOverlay.js (ContentTypeIsSMIME)
+          let signed = /application\/(x-)?pkcs7-(mime|signature)/.test(contentType);
+          if (signed) {
+            console.logStringMessage("Message from " + msgHdr.author + " is signed!");
+            GreatDANE.getCerts(msgHdr.author);
+          }
+        } else {
+          console.logStringMessage("Message does not contain 'content-type' header!");
         }
-
-        console.logStringMessage("properties: " + properties);
+      }, true);
     }
   };
 
   var notificationService = Cc["@mozilla.org/messenger/msgnotificationservice;1"].getService(Ci.nsIMsgFolderNotificationService);
   notificationService.addListener(newMailListener, notificationService.msgAdded);
 }, false);
-*/

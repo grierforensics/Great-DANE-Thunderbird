@@ -8,24 +8,7 @@ var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleServic
 
 function onOK() {
     var emailAddress = document.getElementById("email-input").value;
-
-    GreatDANE.getCertsForEmailAddress(emailAddress,
-        function (certs, address) {
-          /*
-            let mainWindow = GreatdaneOverlay.getMail3Pane();
-            let dialog = mainWindow.openDialog("chrome://greatdane/content/certs.xul",
-                "certs", "chrome,centerscreen", {certificates: certs});
-            dialog.focus();
-          */
-
-            certs.forEach(function (cert) { GreatDANE.addCertificate(cert); });
-            // mainWindow.openDialog("chrome://greatdane/content/certs.xul", "certs", "chrome");
-            // let tabmail = mainWindow.document.getElementById("tabmail");
-            // tabmail.openTab("chromeTab", {chromePage: "chrome://greatdane/content/index.html"});
-        },
-        function (responseText, address) {
-            console.logStringMessage("getCertsForEmailAddress error: " + responseText);
-        });
+    GreatDANE.getCerts(emailAddress);
     return true;
 }
 

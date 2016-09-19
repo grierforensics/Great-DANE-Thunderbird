@@ -20,7 +20,7 @@ function onCancel() {
 (function () {
     let recipients = window.arguments[0].recipients;
 
-    for (idx = 0; idx < recipients.length; idx++) {
+    for (let idx = 0; idx < recipients.length; idx++) {
         let rcpt = recipients[idx];
         //console.logStringMessage("Recipient: " + rcpt);
 
@@ -28,7 +28,9 @@ function onCancel() {
         // certs for the last recipient so we'll track which recipient is last
         let lastAddress = idx === recipients.length - 1;
         (function (last) {
-            GreatDANE.getCertsForEmailAddress(rcpt,
+            // This doesn't use GreatDANE.getCerts directly because it must also
+            // close the dialog after the last certificate is retrieved
+            GreatDANE.fetchCertsForEmailAddress(rcpt,
                 function (certs, address) {
                     certs.forEach(function (cert) { GreatDANE.addCertificate(cert); });
                     if (last) {
@@ -36,7 +38,7 @@ function onCancel() {
                     }
                 },
                 function (responseText, address) {
-                    console.logStringMessage("getCertsForEmailAddress error: " + responseText);
+                    console.logStringMessage("fetchCertsForEmailAddress error: " + responseText);
                     if (last) {
                         window.close();
                     }

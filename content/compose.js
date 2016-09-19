@@ -4,11 +4,15 @@ const Cc = Components.classes;
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
+// Determines for which of the message recipients we don't have certificates
+// and spawns a modal dialog box that appears only as long as it takes to
+// perform AJAX requests for the certificates from the DANE engine.
+//
 // This is *the* place to perform security work prior to the message being sent
 // See:
 // - https://dxr.mozilla.org/comm-central/source/mail/components/compose/content/MsgComposeCommands.js#2891-2893
 // - https://developer.mozilla.org/en-US/docs/User:groovecoder/Compose_New_Message
-function msgSendHandler(evt) {
+function greatDaneMsgSendHandler(evt) {
     /*
     var msgComposeWindow = document.getElementById("msgcomposeWindow");
     var msgType = msgComposeWindow.getAttribute("msgtype");
@@ -60,4 +64,4 @@ function msgSendHandler(evt) {
     dialog.focus();
 }
 
-window.addEventListener("compose-send-message", msgSendHandler, true);
+window.addEventListener("compose-send-message", greatDaneMsgSendHandler, true);

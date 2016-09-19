@@ -13,10 +13,10 @@
 
     $(document).ready(function () {
 
-      var obj = getEmailsForCurrentMessage();
-      $("#certs").append("<pre>" + JSON.stringify(obj) + "</pre>");
+      //var obj = getEmailsForCurrentMessage();
+      //$("#certs").append("<pre>" + JSON.stringify(obj) + "</pre>");
 
-      getCertsForEmailAddress(['danetest@had-pilot.biz'], function (certs) {
+      GreatDANE.fetchCertsForEmailAddress(['danetest@had-pilot.biz'], function (certs) {
         $("#certs").append("<h3>raw</h3><pre>" + certs + "</pre>");
 
         var jsonStr = JSON.stringify(certs, null, 2);

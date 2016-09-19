@@ -15,6 +15,8 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 Cu.import("resource:///modules/gloda/index_msg.js");
 Cu.import("resource:///modules/gloda/mimemsg.js");
 
+const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
 //const hostAndPort = 'dst.grierforensics.com';
 //const hostAndPort = 'localhost:7777';
 const apiEndpoint = "http://localhost:47036/"
@@ -38,28 +40,56 @@ const CERT_TRUST = ",Pu,";
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
+var session = {};
+
 var GreatDANE = {
-  /**
-   * Fetches dane certs from configured dst webapp. callback will be passed an array of results
-   */
-  getCertsForEmailAddress: function (emailAddress, success, failure) {
-    ajax('GET', apiEndpoint + encodeURIComponent(emailAddress) + '/pem', null, function (responseText) {
-      //console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
+
+  // Fetches DANE certificates and adds them to Thunderbird's certificate store
+  getCerts: function (emailAddress) {
+    var self = this;
+
+    self.fetchCertsForEmailAddress(emailAddress,
+      function (certs, address) {
+        certs.forEach(function (cert) {
+          console.logStringMessage("Adding cert: " + cert);
+          self.addCertificate(cert);
+        });
+      },
+      function (responseText, address) {
+        console.logStringMessage("getCerts error: " + responseText);
+      }
+    );
+  },
+
+  // Fetches DANE certs from configured dst webapp. The callback will be passed an array of PEM certs.
+  fetchCertsForEmailAddress: function (emailAddress, success, failure) {
+    var scrubbed = this.scrubEmailAddress(emailAddress);
+    if (!scrubbed) {
+      console.logStringMessage("Failed to scrub email address: " + emailAddress);
+    }
+
+    // Check if we've already fetched certs for this email address
+    if (scrubbed in session) {
+      return;
+    }
+
+    ajax('GET', apiEndpoint + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
+      //console.logStringMessage("dane lookup. email=" + scrubbed + " result=" + responseText);//debug
+      session[scrubbed] = true;
       let certs = JSON.parse(responseText);
-      success && success(certs, emailAddress);
+      //console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + scrubbed);
+      success && success(certs, scrubbed);
     }, function (responseText) {
-      failure && failure(responseText, emailAddress);
+      session[scrubbed] = false;
+      //console.logStringMessage("DANE lookup ERROR. email=" + scrubbed + " result=" + responseText);
+      failure && failure(responseText, scrubbed);
     });
   },
 
+  // Adds a certificate in PEM (base64) form to Thunderbird's cert store
   addCertificate: function (base64cert) {
     // https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
     var certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
-    var certdb2 = certdb;
-    try {
-      certdb2 = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB2);
-    } catch (e) {
-    }
     //console.logStringMessage("addCertificate:" + base64cert);
 
     var beginCert = "-----BEGIN CERTIFICATE-----";
@@ -69,7 +99,17 @@ var GreatDANE = {
     var begin = base64cert.indexOf(beginCert);
     var end = base64cert.indexOf(endCert);
     var cert = base64cert.substring(begin + beginCert.length, end)
-    certdb2.addCertFromBase64(cert, CERT_TRUST, "");
+    certdb.addCertFromBase64(cert, CERT_TRUST, "");
+  },
+
+  // Extracts a valid email address from an "author" string
+  scrubEmailAddress: function (emailAddress) {
+    if (!emailAddress || emailAddress.length <= 6) {
+      return null;
+    }
+
+    var result = emailAddress.replace(/.*?</, "").replace(/>.*?/, "").trim();
+    return emailRegex.test(result) ? result : null;
   }
 };
 
@@ -85,7 +125,6 @@ function hexToAscii(hexIn) {
 */
 
 function ajax(method, url, args, onload, onerror) {
-  // Instantiates the XMLHttpRequest
   var client = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
 
   var uri = url;
@@ -108,13 +147,12 @@ function ajax(method, url, args, onload, onerror) {
 
   client.onload = function () {
     if (this.status >= 200 && this.status < 300) {
-      // Performs the function "resolve" when this.status is equal to 2xx
       onload(this.response);
     } else {
-      // Performs the function "reject" when this.status is different than 2xx
       onerror(this.statusText);
     }
   };
+
   client.onerror = function () {
     onerror(this.statusText);
   };
