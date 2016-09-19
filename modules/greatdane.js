@@ -69,7 +69,10 @@ var GreatDANE = {
     }
 
     // Check if we've already fetched certs for this email address
+    // Note: we may want to remove this "caching" altogether allowing us to use
+    // DANE SMIMEA for live verification of certs (which some people want).
     if (scrubbed in session) {
+      success && success([], scrubbed);
       return;
     }
 
