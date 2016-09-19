@@ -43,9 +43,8 @@ var GreatDANE = {
    * Fetches dane certs from configured dst webapp. callback will be passed an array of results
    */
   getCertsForEmailAddress: function (emailAddress, success, failure) {
-    console.logStringMessage("Performing AJAX request!");
     ajax('GET', apiEndpoint + encodeURIComponent(emailAddress) + '/pem', null, function (responseText) {
-      console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
+      //console.logStringMessage("dane lookup. email=" + emailAddress + " result=" + responseText);//debug
       let certs = JSON.parse(responseText);
       success && success(certs, emailAddress);
     }, function (responseText) {
@@ -61,7 +60,7 @@ var GreatDANE = {
       certdb2 = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB2);
     } catch (e) {
     }
-    console.logStringMessage("addCertificate:" + base64cert);
+    //console.logStringMessage("addCertificate:" + base64cert);
 
     var beginCert = "-----BEGIN CERTIFICATE-----";
     var endCert = "-----END CERTIFICATE-----";

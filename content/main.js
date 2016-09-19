@@ -139,10 +139,20 @@ window.addEventListener('load', function _setup_greatdate_eventlisteners() {
   var newMailListener = {
     msgAdded: function (msgHdr) {
       if (!msgHdr.isRead) {
-        GreatdaneOverlay.processEmailAddress(msgHdr.author);
+        //GreatdaneOverlay.processEmailAddress(msgHdr.author);
       }
+
+        let enumerator = msgHdr.propertyEnumerator;
+        let properties = "";
+        while (enumerator.hasMore()) {
+            let property = enumerator.getNext();
+            properties += property + ": " + msgHdr.getProperty(property);
+        }
+
+        console.logStringMessage("properties: " + properties);
     }
   };
+
   var notificationService = Cc["@mozilla.org/messenger/msgnotificationservice;1"].getService(Ci.nsIMsgFolderNotificationService);
   notificationService.addListener(newMailListener, notificationService.msgAdded);
 }, false);

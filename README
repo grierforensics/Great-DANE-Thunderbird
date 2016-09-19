@@ -1,0 +1,8 @@
+# Great DANE Thunderbird Extension
+
+## Thunderbird extension notes
+
+Get sender address from compose window:
+https://dxr.mozilla.org/comm-central/source/mail/components/compose/content/MsgComposeCommands.js#4265
+
+

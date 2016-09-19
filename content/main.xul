@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.-->
+<?xml-stylesheet href="chrome://greatdane/skin/toolbarButton.css" type="text/css" ?>
+
+<overlay id="greatdaneMessengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="chrome://greatdane/content/main.js" />
+
+  <toolbarpalette id="MailToolbarPalette">
+    <toolbarbutton id="greatdane-button"
+      class="greatdane-button toolbarbutton-1"
+      label="GreatDANE"
+      type="button"
+      oncommand="GreatdaneOverlay.click();">
+    </toolbarbutton>
+  </toolbarpalette>
+
+  <!-- Temporarily disable -->
+  <!--
+  <vbox id="addresses-box" >
+    <hbox id="box-to" >
+      <vbox flex="1">
+        <textbox id="msgTO"
+                 onkeypress="GreatdaneOverlay.processPartialTextbox(this)"
+                 onblur="GreatdaneOverlay.processPartialTextbox(this)" />
+      </vbox>
+    </hbox>
+  </vbox>
+  -->
+</overlay>
