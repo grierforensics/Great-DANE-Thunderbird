@@ -17,10 +17,6 @@ Cu.import("resource:///modules/gloda/mimemsg.js");
 
 const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-//const hostAndPort = 'dst.grierforensics.com';
-//const hostAndPort = 'localhost:7777';
-const apiEndpoint = "http://localhost:47036/"
-
 // The only docs I've found on this "trust string" is the source code itself (addCertFromBase64):
 // https://dxr.mozilla.org/comm-central/source/mozilla/security/manager/ssl/nsIX509CertDB.idl#418
 //
@@ -43,6 +39,10 @@ var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleServic
 var session = {};
 
 var GreatDANE = {
+
+  prefs: Cc["@mozilla.org/preferences-service;1"]
+      .getService(Ci.nsIPrefService)
+      .getBranch("extensions.greatdane."),
 
   // Fetches DANE certificates and adds them to Thunderbird's certificate store
   getCerts: function (emailAddress) {
@@ -76,7 +76,13 @@ var GreatDANE = {
       return;
     }
 
-    ajax('GET', apiEndpoint + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
+    var apiUrl = this.prefs.getCharPref("engine_url");
+    if (apiUrl.indexOf("/", apiUrl.length - 1) == -1) {
+      apiUrl += "/";
+    }
+    console.logStringMessage("apiUrl = " + apiUrl);
+
+    ajax('GET', apiUrl + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
       //console.logStringMessage("dane lookup. email=" + scrubbed + " result=" + responseText);//debug
       session[scrubbed] = true;
       let certs = JSON.parse(responseText);

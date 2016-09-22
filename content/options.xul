@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<prefwindow id="greatdane-prefs"
+    title="GreatDANE options"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://greatdane/content/options.js" />
+
+    <prefpane id="greatdane-engine" label="Engine" image="chrome://messenger/skin/preferences/general.png">
+        <preferences>
+            <preference id="url" name="extensions.greatdane.engine_url" type="string" />
+        </preferences>
+
+        <grid align="center">
+            <columns>
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                    <label control="url_textbox" value="DANE SMIMEA Engine URL" />
+                    <textbox preference="url" id="url_textbox" />
+                </row>
+            </rows>
+        </grid>
+    </prefpane>
+
+</prefwindow>

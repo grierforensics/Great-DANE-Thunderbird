@@ -3,20 +3,4 @@
 
 <overlay id="greatdaneComposeWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://greatdane/content/compose.js" />
-
-  <toolbarpalette id="MsgComposeToolbarPalette">
-    <toolbarbutton id="greatdane-button"
-      class="greatdane-button toolbarbutton-1"
-      label="GreatDANE"
-      type="menu-button"
-      oncommand="GreatdaneOverlay.click();"
-      >
-        <menupopup>
-            <menuitem label="Get Certs" id="greatdane-button-getcerts"
-                oncommand="GreatdaneOverlay.click();"
-                />
-        </menupopup>
-    </toolbarbutton>
-  </toolbarpalette>
-
 </overlay>
