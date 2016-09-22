@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- (C) Copyright 2015 Grier Forensics.  All rights reserved.-->
+<!-- (C) Copyright 2016 Grier Forensics.  All rights reserved.-->
 <?xml-stylesheet href="chrome://greatdane/skin/toolbarButton.css" type="text/css" ?>
 <overlay id="greatdaneMessengerWindow" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/x-javascript" src="chrome://greatdane/content/main.js" />

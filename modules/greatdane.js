@@ -40,10 +40,6 @@ var session = {};
 
 var GreatDANE = {
 
-  prefs: Cc["@mozilla.org/preferences-service;1"]
-      .getService(Ci.nsIPrefService)
-      .getBranch("extensions.greatdane."),
-
   // Fetches DANE certificates and adds them to Thunderbird's certificate store
   getCerts: function (emailAddress) {
     var self = this;
@@ -76,13 +72,10 @@ var GreatDANE = {
       return;
     }
 
-    var apiUrl = this.prefs.getCharPref("engine_url");
-    if (apiUrl.indexOf("/", apiUrl.length - 1) == -1) {
-      apiUrl += "/";
-    }
-    console.logStringMessage("apiUrl = " + apiUrl);
+    var engineUrl = this.prefs.getCharPref("engine_url");
+    console.logStringMessage("engineUrl = " + engineUrl);
 
-    ajax('GET', apiUrl + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
+    ajax('GET', engineUrl + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
       //console.logStringMessage("dane lookup. email=" + scrubbed + " result=" + responseText);//debug
       session[scrubbed] = true;
       let certs = JSON.parse(responseText);
