@@ -36,9 +36,14 @@ const CERT_TRUST = ",Pu,";
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
-var session = {};
+//var session = {};
 
 var GreatDANE = {
+
+  // Handle to preferences
+  prefs: Cc["@mozilla.org/preferences-service;1"]
+        .getService(Ci.nsIPrefService)
+        .getBranch("extensions.greatdane."),
 
   // Fetches DANE certificates and adds them to Thunderbird's certificate store
   getCerts: function (emailAddress) {
@@ -67,22 +72,26 @@ var GreatDANE = {
     // Check if we've already fetched certs for this email address
     // Note: we may want to remove this "caching" altogether allowing us to use
     // DANE SMIMEA for live verification of certs (which some people want).
+    /*
     if (scrubbed in session) {
       success && success([], scrubbed);
       return;
     }
+    */
 
-    var engineUrl = this.prefs.getCharPref("engine_url");
-    console.logStringMessage("engineUrl = " + engineUrl);
+    // Retrieve the currently-configured DANE SMIMEA Engine's API URL
+    let engineUrl = this.prefs.getCharPref("engine_url");
+    console.logStringMessage("retrieving from engineUrl = " + engineUrl);
 
-    ajax('GET', engineUrl + encodeURIComponent(scrubbed) + '/pem', null, function (responseText) {
+    let url = engineUrl + "/" + encodeURIComponent(scrubbed) + '/pem';
+    ajax('GET', url, null, function (responseText) {
       //console.logStringMessage("dane lookup. email=" + scrubbed + " result=" + responseText);//debug
-      session[scrubbed] = true;
+      //session[scrubbed] = true;
       let certs = JSON.parse(responseText);
       //console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + scrubbed);
       success && success(certs, scrubbed);
     }, function (responseText) {
-      session[scrubbed] = false;
+      //session[scrubbed] = false;
       //console.logStringMessage("DANE lookup ERROR. email=" + scrubbed + " result=" + responseText);
       failure && failure(responseText, scrubbed);
     });
@@ -91,16 +100,16 @@ var GreatDANE = {
   // Adds a certificate in PEM (base64) form to Thunderbird's cert store
   addCertificate: function (base64cert) {
     // https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
-    var certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
+    let certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
     //console.logStringMessage("addCertificate:" + base64cert);
 
-    var beginCert = "-----BEGIN CERTIFICATE-----";
-    var endCert = "-----END CERTIFICATE-----";
+    let beginCert = "-----BEGIN CERTIFICATE-----";
+    let endCert = "-----END CERTIFICATE-----";
 
     base64cert = base64cert.replace(/[\r\n]/g, "");
-    var begin = base64cert.indexOf(beginCert);
-    var end = base64cert.indexOf(endCert);
-    var cert = base64cert.substring(begin + beginCert.length, end)
+    let begin = base64cert.indexOf(beginCert);
+    let end = base64cert.indexOf(endCert);
+    let cert = base64cert.substring(begin + beginCert.length, end)
     certdb.addCertFromBase64(cert, CERT_TRUST, "");
   },
 
@@ -110,8 +119,22 @@ var GreatDANE = {
       return null;
     }
 
-    var result = emailAddress.replace(/.*?</, "").replace(/>.*?/, "").trim();
+    let result = emailAddress.replace(/.*?</, "").replace(/>.*?/, "").trim();
     return emailRegex.test(result) ? result : null;
+  },
+
+  testConnection: function (onSuccess, onFailure) {
+    // Retrieve the currently-configured DANE SMIMEA Engine's API URL
+    let engineUrl = this.prefs.getCharPref("engine_url");
+    console.logStringMessage("testing engineUrl = " + engineUrl);
+
+    let url = engineUrl + '/ping';
+    ajax('GET', url, null, function (responseText) {
+      onSuccess && onSuccess(responseText);
+    }, function (responseText) {
+      onFailure && onFailure(responseText);
+    },
+    2000);
   }
 };
 
@@ -126,15 +149,29 @@ function hexToAscii(hexIn) {
 }
 */
 
-function ajax(method, url, args, onload, onerror) {
-  var client = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
+/* Perform an asynchronous HTTP request
+ *
+ * method: HTTP method, e.g. GET
+ * url: HTTP URL
+ * args: object mapping keys to values
+ * onLoad: called if request is successful
+ * onError: called if any errors occur
+ * timeout (optional): request timeout in milliseconds (default: 2000ms)
+ */
+function ajax(method, url, args, onLoad, onError, timeout) {
+  let client = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
 
-  var uri = url;
+  // Maybe we can use ES6's default parameters instead of this
+  if (typeof timeout !== 'undefined') {
+    client.timeout = timeout;
+  }
+
+  let uri = url;
 
   if (args && (method === 'POST' || method === 'PUT')) {
     uri += '?';
-    var argcount = 0;
-    for (var key in args) {
+    let argcount = 0;
+    for (let key in args) {
       if (args.hasOwnProperty(key)) {
         if (argcount++) {
           uri += '&';
@@ -144,18 +181,27 @@ function ajax(method, url, args, onload, onerror) {
     }
   }
 
-  client.open(method, uri);
-  client.send();
-
   client.onload = function () {
     if (this.status >= 200 && this.status < 300) {
-      onload(this.response);
+      onLoad(this.response);
     } else {
-      onerror(this.statusText);
+      onError(this.statusText);
     }
   };
 
   client.onerror = function () {
-    onerror(this.statusText);
+    onError(this.statusText);
   };
+
+  client.ontimeout = function () {
+    onError("timed out");
+  };
+
+  try {
+    client.open(method, uri);
+  } catch (err) {
+    onError(err.message + " (" + uri + ")");
+    return;
+  }
+  client.send();
 }

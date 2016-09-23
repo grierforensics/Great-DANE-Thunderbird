@@ -55,44 +55,49 @@ var GreatdaneOverlay = {
       console.logStringMessage("Can't open new tab from here");
     }
   }
-}
+};
 
-/*
- * Commented by JN 2016-09-15 due to Thunderbird console error:
- *  Error: TypeError: document.getElementById(...) is null
- */
-/*
-window.addEventListener("load", function _overlay_eventListener() {
-// Fixup.
-  document.getElementById("dummychromebrowser").setAttribute("tooltip", "aHTMLTooltip");
-}, false);
-*/
+(function () {
 
+  function on_load() {
+    let prefs = Cc["@mozilla.org/preferences-service;1"]
+        .getService(Ci.nsIPrefService)
+        .getBranch("extensions.greatdane.");
 
-// Once the window has loaded, add a "new message" listener that checks
-// if the new message is signed (S/MIME), and, if so, retrieves certificates
-// for the sender.
-window.addEventListener('load', function _setup_greatdate_eventlisteners() {
-  var newMailListener = {
-    msgAdded: function (msgHdr) {
-      MsgHdrToMimeMessage(msgHdr, null, function (aMsgHdr, aMimeMsg) {
-        //console.logStringMessage("headers: " + JSON.stringify(aMimeMsg.headers), null, 2);
-        if (aMimeMsg.has("content-type")) {
-          let contentType = aMimeMsg.getAll("content-type");
-          // contentType is an array, but the regex will still match
-          // borrowed from: msgHdrViewOverlay.js (ContentTypeIsSMIME)
-          let signed = /application\/(x-)?pkcs7-(mime|signature)/.test(contentType);
-          if (signed) {
-            console.logStringMessage("Message from " + msgHdr.author + " is signed!");
-            GreatDANE.getCerts(msgHdr.author);
-          }
-        } else {
-          console.logStringMessage("Message does not contain 'content-type' header!");
+    // Open options for configuring if this is the first time
+    if (prefs.getBoolPref("first_run")) {
+      let options = window.openDialog("chrome://greatdane/content/options.xul",
+        "options", "chrome,centerscreen");
+      options.focus();
+    } else {
+      var newMailListener = {
+        msgAdded: function (msgHdr) {
+          MsgHdrToMimeMessage(msgHdr, null, function (aMsgHdr, aMimeMsg) {
+            //console.logStringMessage("headers: " + JSON.stringify(aMimeMsg.headers), null, 2);
+            if (aMimeMsg.has("content-type")) {
+              let contentType = aMimeMsg.getAll("content-type");
+              // contentType is an array, but the regex will still match
+              // Borrowed from: msgHdrViewOverlay.js (ContentTypeIsSMIME)
+              let signed = /application\/(x-)?pkcs7-(mime|signature)/.test(contentType);
+              if (signed) {
+                console.logStringMessage("Message from " + msgHdr.author + " is signed!");
+                GreatDANE.getCerts(msgHdr.author);
+              }
+            } else {
+              console.logStringMessage("Message does not contain 'content-type' header!");
+            }
+          }, true);
         }
-      }, true);
+      };
+      let notificationService = Cc["@mozilla.org/messenger/msgnotificationservice;1"]
+        .getService(Ci.nsIMsgFolderNotificationService);
+      notificationService.addListener(newMailListener, notificationService.msgAdded);
     }
   };
 
-  var notificationService = Cc["@mozilla.org/messenger/msgnotificationservice;1"].getService(Ci.nsIMsgFolderNotificationService);
-  notificationService.addListener(newMailListener, notificationService.msgAdded);
-}, false);
+  // Once the window has loaded, check if this is the first time running the
+  // extension. If so, open the options dialog. Otherwise, add a "new message"
+  // listener that checks if the new message is signed (S/MIME), and, if so,
+  // retrieves certificates for the sender.
+  window.addEventListener('load', on_load, false);
+})();

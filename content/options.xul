@@ -1,29 +1,47 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 
-<prefwindow id="greatdane-prefs"
-    title="GreatDANE options"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<prefwindow
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="greatdane-prefs"
+    title="GreatDANE options" >
 
-    <script type="application/x-javascript" src="chrome://greatdane/content/options.js" />
+  <script type="application/x-javascript" src="chrome://greatdane/content/options.js" />
 
-    <prefpane id="greatdane-engine" label="Engine" image="chrome://messenger/skin/preferences/general.png">
-        <preferences>
-            <preference id="url" name="extensions.greatdane.engine_url" type="string" />
-        </preferences>
+  <prefpane id="greatdane-engine" label="Engine" image="chrome://messenger/skin/preferences/general.png">
+    <preferences>
+      <preference id="url" name="extensions.greatdane.remote_url" type="string" instantApply="true" />
+      <preference id="port" name="extensions.greatdane.local_port" type="int" instantApply="true" />
+      <preference id="engine" name="extensions.greatdane.engine_type" type="string" instantApply="true" />
+    </preferences>
 
-        <grid align="center">
-            <columns>
-                <column />
-                <column />
-            </columns>
-            <rows>
-                <row>
-                    <label control="url_textbox" value="DANE SMIMEA Engine URL" />
-                    <textbox preference="url" id="url_textbox" />
-                </row>
-            </rows>
+    <groupbox>
+      <caption label="DANE SMIMEA Engine" />
+      <radiogroup preference="engine" >
+        <grid>
+          <columns>
+            <column />
+            <column />
+          </columns>
+          <rows>
+            <row>
+              <radio id="grier" value="grier" label="Grier Forensics" />
+            </row>
+            <row>
+              <radio id="local" value="local" label="Local Port" />
+              <textbox preference="port" type="number" min="0" max="65535" id="localPort" />
+            </row>
+            <row>
+              <radio id="remote" value="remote" label="Remote URL" />
+              <textbox preference="url" id="remoteUrl" />
+            </row>
+            <row>
+              <button label="Test Connection" oncommand="GreatDANEOptions.testConnection()" />
+              <label id="testConnResults" />
+            </row>
+          </rows>
         </grid>
-    </prefpane>
-
+      </radiogroup>
+    </groupbox>
+  </prefpane>
 </prefwindow>
