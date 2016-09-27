@@ -27,7 +27,7 @@
               <radio id="grier" value="grier" label="Grier Forensics" />
             </row>
             <row>
-              <radio id="local" value="local" label="Local Address" />
+              <radio id="local" value="local" label="Local Instance" />
             </row>
             <row>
               <radio id="remote" value="remote" label="Remote URL" />

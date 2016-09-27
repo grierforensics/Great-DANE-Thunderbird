@@ -12,51 +12,6 @@ Cu.import("resource://greatdane/greatdane.js");
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
-
-var GreatdaneOverlay = {
-
-  click: function () {
-    console.logStringMessage("GreatDANE button clicked!");
-    if (document.readyState === "complete") {
-
-      let dialog = window.openDialog("chrome://greatdane/content/email.xul", "email", "chrome,centerscreen");
-      dialog.focus();
-    }
-  },
-
-  getEmailsForCurrentMessage: function () {
-    // First we get msgHdr, a nsIMsgDbHdr
-    let mainWindow = this.getMail3Pane();
-    let tabmail = mainWindow.document.getElementById("tabmail");
-    // We might not always have a selected message, so check first
-    let msgHdr = mainWindow.gFolderDisplay.selectedMessage;
-
-    return [msgHdr.author]; //todo: return other fields
-  },
-
-  getMail3Pane: function () {
-    return Cc["@mozilla.org/appshell/window-mediator;1"]
-      .getService(Ci.nsIWindowMediator)
-      .getMostRecentWindow("mail:3pane");
-  },
-
-  openTab: function (page) {
-    // Borrowed from https://github.com/protz/LatexIt/blob/master/content/firstrun.js
-    var tabmail = document.getElementById("tabmail");
-    if (tabmail && 'openTab' in tabmail) {
-      Cc['@mozilla.org/appshell/window-mediator;1'].
-        getService(Ci.nsIWindowMediator).
-        getMostRecentWindow("mail:3pane").
-        document.getElementById("tabmail").
-        //openTab("contentTab", {contentPage: page});
-        openTab("chromeTab", {chromePage: page});
-    } else {
-      //openDialog(page, "", "width=640,height=480");
-      console.logStringMessage("Can't open new tab from here");
-    }
-  }
-};
-
 (function () {
 
   function on_load() {
@@ -73,14 +28,12 @@ var GreatdaneOverlay = {
       var newMailListener = {
         msgAdded: function (msgHdr) {
           MsgHdrToMimeMessage(msgHdr, null, function (aMsgHdr, aMimeMsg) {
-            //console.logStringMessage("headers: " + JSON.stringify(aMimeMsg.headers), null, 2);
             if (aMimeMsg.has("content-type")) {
               let contentType = aMimeMsg.getAll("content-type");
               // contentType is an array, but the regex will still match
               // Borrowed from: msgHdrViewOverlay.js (ContentTypeIsSMIME)
               let signed = /application\/(x-)?pkcs7-(mime|signature)/.test(contentType);
               if (signed) {
-                console.logStringMessage("Message from " + msgHdr.author + " is signed!");
                 GreatDANE.getCerts(msgHdr.author);
               }
             } else {

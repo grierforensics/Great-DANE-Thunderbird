@@ -7,7 +7,7 @@
 
     <!-- Front End MetaData -->
     <em:name>Great DANE</em:name>
-    <em:description>Load DANE certs into Thunderbird</em:description>
+    <em:description>Retrieve DANE Certificates for Encryption/Signing</em:description>
     <em:optionsURL>chrome://greatdane/content/options.xul</em:optionsURL>
     <em:creator>Grier Forensics</em:creator>
 

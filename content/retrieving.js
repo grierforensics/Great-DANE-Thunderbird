@@ -16,14 +16,12 @@ function onCancel() {
 // spawns the "Retrieving Certificates" dialog. It will attempt to
 // retrieve and store certs for each recipient address passed to the
 // dialog box window.
-// TODO: maybe set a timeout before closing this window regardless
+// TODO: set a timeout before closing this window so it's guaranteed to auto-close
 (function () {
     let recipients = window.arguments[0].recipients;
 
     for (let idx = 0; idx < recipients.length; idx++) {
         let rcpt = recipients[idx];
-        //console.logStringMessage("Recipient: " + rcpt);
-
         // We need to close the dialog box automatically after we've fetched
         // certs for the last recipient so we'll track which recipient is last
         let lastAddress = idx === recipients.length - 1;

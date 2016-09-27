@@ -37,6 +37,9 @@ var GreatDANEOptions = {
         return;
       }
 
+      // Clear testing results if any options change
+      document.getElementById("testConnResults").value = "";
+
       this.updateEngineUrl();
     },
 
@@ -59,23 +62,20 @@ var GreatDANEOptions = {
         engineUrl = GreatDANE.LOCAL_URL;
         break;
       }
-      console.logStringMessage("Setting engine_url to " + engineUrl);
       this._prefService.setCharPref("engine_url", engineUrl);
     },
 
     testConnection: function () {
-      console.logStringMessage("testing connection to " + this._prefService.getCharPref("engine_url"));
+      //console.logStringMessage("testing connection to " + this._prefService.getCharPref("engine_url"));
       document.getElementById("testConnResults").value = "Testing...";
 
       GreatDANE.testConnection(
         // onSuccess
         function () {
-            console.logStringMessage("test successful");
-            document.getElementById("testConnResults").value = "Successful";
+            document.getElementById("testConnResults").value = "Success!";
         },
         // onFailure
         function () {
-            console.logStringMessage("test NOT successful");
             document.getElementById("testConnResults").value = "Error!";
         }
       );

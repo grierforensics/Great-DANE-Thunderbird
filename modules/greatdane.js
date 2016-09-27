@@ -36,8 +36,6 @@ const CERT_TRUST = ",Pu,";
 
 var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
-//var session = {};
-
 var GreatDANE = {
   // "Constants"
   GRIER_URL: "http://dst.grierforensics.com/toolset/",
@@ -55,7 +53,6 @@ var GreatDANE = {
     self.fetchCertsForEmailAddress(emailAddress,
       function (certs, address) {
         certs.forEach(function (cert) {
-          console.logStringMessage("Adding cert: " + cert);
           self.addCertificate(cert);
         });
       },
@@ -84,18 +81,13 @@ var GreatDANE = {
 
     // Retrieve the currently-configured DANE SMIMEA Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
-    console.logStringMessage("retrieving from engineUrl = " + engineUrl);
+    //console.logStringMessage("retrieving from engineUrl = " + engineUrl);
 
     let url = engineUrl + "/" + encodeURIComponent(scrubbed) + '/pem';
     ajax('GET', url, null, function (responseText) {
-      //console.logStringMessage("dane lookup. email=" + scrubbed + " result=" + responseText);//debug
-      //session[scrubbed] = true;
       let certs = JSON.parse(responseText);
-      //console.logStringMessage("DANE lookup success. Adding/updating " + certs.length + " certs for email=" + scrubbed);
       success && success(certs, scrubbed);
     }, function (responseText) {
-      //session[scrubbed] = false;
-      //console.logStringMessage("DANE lookup ERROR. email=" + scrubbed + " result=" + responseText);
       failure && failure(responseText, scrubbed);
     });
   },
@@ -104,11 +96,9 @@ var GreatDANE = {
   addCertificate: function (base64cert) {
     // https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
     let certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
-    //console.logStringMessage("addCertificate:" + base64cert);
 
     let beginCert = "-----BEGIN CERTIFICATE-----";
     let endCert = "-----END CERTIFICATE-----";
-
     base64cert = base64cert.replace(/[\r\n]/g, "");
     let begin = base64cert.indexOf(beginCert);
     let end = base64cert.indexOf(endCert);
@@ -129,8 +119,6 @@ var GreatDANE = {
   testConnection: function (onSuccess, onFailure) {
     // Retrieve the currently-configured DANE SMIMEA Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
-    console.logStringMessage("testing engineUrl = " + engineUrl);
-
     let url = engineUrl + '/ping';
     ajax('GET', url, null, function (responseText) {
       onSuccess && onSuccess(responseText);
@@ -140,17 +128,6 @@ var GreatDANE = {
     2000);
   }
 };
-
-/*
-function hexToAscii(hexIn) {
-  let hex = hexIn.toString();
-  var str = "";
-  for (c = 0; c < hex.length; c += 2) {
-    str += String.fromCharCode(parseInt(hex.substr(c, 2), 16));
-  }
-  return str;
-}
-*/
 
 /* Perform an asynchronous HTTP request
  *

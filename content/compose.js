@@ -13,11 +13,6 @@ var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleServic
 // - https://dxr.mozilla.org/comm-central/source/mail/components/compose/content/MsgComposeCommands.js#2891-2893
 // - https://developer.mozilla.org/en-US/docs/User:groovecoder/Compose_New_Message
 function greatDaneMsgSendHandler(evt) {
-    /*
-    var msgComposeWindow = document.getElementById("msgcomposeWindow");
-    var msgType = msgComposeWindow.getAttribute("msgtype");
-    */
-
     // TODO: Only retrieve certificates if the message should be encrypted
     // See: https://dxr.mozilla.org/comm-central/source/mail/extensions/smime/content/msgCompSMIMEOverlay.js
     // the following does not work because msgCompSMIMEOverlay.js changes `requireEncryptMessage` to false
@@ -26,21 +21,6 @@ function greatDaneMsgSendHandler(evt) {
     if (!gMsgCompose.compFields.securityInfo.requireEncryptMessage) {
         console.logStringMessage("Message not encrypted. Not checking for certificates.");
         return;
-    }
-    */
-
-    /*
-    let compFields = gMsgCompose.compFields;
-    let allRecipients = [];
-    for (let type of ["to", "cc", "bcc"]) {
-
-        let recipients = compFields.splitRecipients(compFields[type], true, {});
-
-        for (let rcpt of recipients) {
-            if (allRecipients.indexOf(rcpt) === -1) {
-                allRecipients.push(rcpt);
-            }
-        }
     }
     */
 
@@ -54,7 +34,7 @@ function greatDaneMsgSendHandler(evt) {
                                   emailAddresses);
 
     if (missingCount.value <= 0) {
-        console.logStringMessage("All certificates found!");
+        // No certificates need to be fetched
         return;
     }
 
