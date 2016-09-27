@@ -15,7 +15,7 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 Cu.import("resource:///modules/gloda/index_msg.js");
 Cu.import("resource:///modules/gloda/mimemsg.js");
 
-const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const EMAIL_REGEX = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
 // The only docs I've found on this "trust string" is the source code itself (addCertFromBase64):
 // https://dxr.mozilla.org/comm-central/source/mozilla/security/manager/ssl/nsIX509CertDB.idl#418
@@ -39,6 +39,9 @@ var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleServic
 //var session = {};
 
 var GreatDANE = {
+  // "Constants"
+  GRIER_URL: "http://dst.grierforensics.com/toolset/",
+  LOCAL_URL: "http://127.53.5.3:53535/",
 
   // Handle to preferences
   prefs: Cc["@mozilla.org/preferences-service;1"]
@@ -120,7 +123,7 @@ var GreatDANE = {
     }
 
     let result = emailAddress.replace(/.*?</, "").replace(/>.*?/, "").trim();
-    return emailRegex.test(result) ? result : null;
+    return EMAIL_REGEX.test(result) ? result : null;
   },
 
   testConnection: function (onSuccess, onFailure) {

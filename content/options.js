@@ -17,14 +17,15 @@ var GreatDANEOptions = {
     _prefService: null,
 
     startup: function () {
+      this._prefService = Cc["@mozilla.org/preferences-service;1"]
+          .getService(Ci.nsIPrefService)
+          .getBranch("extensions.greatdane."),
+      this._prefService.addObserver("", this, false);
 
-    this._prefService = Cc["@mozilla.org/preferences-service;1"]
-        .getService(Ci.nsIPrefService)
-        .getBranch("extensions.greatdane."),
-    this._prefService.addObserver("", this, false);
+      // Prevent options from opening automatically in the future
+      this._prefService.setBoolPref("first_run", false);
 
-    this.updateEngineUrl();
-
+      this.updateEngineUrl();
     },
 
     shutdown: function () {
@@ -36,9 +37,6 @@ var GreatDANEOptions = {
         return;
       }
 
-      // Prevent options from opening automatically in the future
-      this._prefService.setBoolPref("first_run", false);
-
       this.updateEngineUrl();
     },
 
@@ -47,7 +45,7 @@ var GreatDANEOptions = {
       let engineUrl = "";
       switch (engineType) {
       case "grier":
-        engineUrl = "http://dst.grierforensics.com/toolset/";
+        engineUrl = GreatDANE.GRIER_URL;
         break;
       case "remote":
         engineUrl = this._prefService.getCharPref("remote_url");
@@ -58,10 +56,10 @@ var GreatDANEOptions = {
         break;
       case "local":
       default:
-        // TODO: use another 127.X.X.X address
-        engineUrl = "http://127.0.0.1:" + this._prefService.getIntPref("local_port") + "/";
+        engineUrl = GreatDANE.LOCAL_URL;
         break;
       }
+      console.logStringMessage("Setting engine_url to " + engineUrl);
       this._prefService.setCharPref("engine_url", engineUrl);
     },
 

@@ -11,7 +11,6 @@
   <prefpane id="greatdane-engine" label="Engine" image="chrome://messenger/skin/preferences/general.png">
     <preferences>
       <preference id="url" name="extensions.greatdane.remote_url" type="string" instantApply="true" />
-      <preference id="port" name="extensions.greatdane.local_port" type="int" instantApply="true" />
       <preference id="engine" name="extensions.greatdane.engine_type" type="string" instantApply="true" />
     </preferences>
 
@@ -28,8 +27,7 @@
               <radio id="grier" value="grier" label="Grier Forensics" />
             </row>
             <row>
-              <radio id="local" value="local" label="Local Port" />
-              <textbox preference="port" type="number" min="0" max="65535" id="localPort" />
+              <radio id="local" value="local" label="Local Address" />
             </row>
             <row>
               <radio id="remote" value="remote" label="Remote URL" />
