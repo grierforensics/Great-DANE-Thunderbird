@@ -1,23 +1,16 @@
 // (C) Copyright 2015 Grier Forensics.  All rights reserved.
 
-const Ci = Components.interfaces;
-const Cc = Components.classes;
-const Cu = Components.utils;
-
-Cu.import("resource:///modules/gloda/index_msg.js");
-Cu.import("resource:///modules/gloda/mimemsg.js");
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/NetUtil.jsm");
-Cu.import("resource://greatdane/greatdane.js");
-
-var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-
 (function () {
+  const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
+
+  Cu.import("resource://gre/modules/Services.jsm");
+  Cu.import("resource:///modules/gloda/mimemsg.js");
+  Cu.import("resource://greatdane/greatdane.js");
+
+  var console = Services.console;
 
   function on_load() {
-    let prefs = Cc["@mozilla.org/preferences-service;1"]
-        .getService(Ci.nsIPrefService)
-        .getBranch("extensions.greatdane.");
+    let prefs = Services.prefs.getBranch("extensions.greatdane.");
 
     // Open options for configuring if this is the first time
     if (prefs.getBoolPref("first_run")) {

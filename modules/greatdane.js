@@ -4,16 +4,8 @@
 
 var EXPORTED_SYMBOLS = ['GreatDANE']
 
-const Ci = Components.interfaces;
-const Cc = Components.classes;
-const Cu = Components.utils;
-
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/NetUtil.jsm");
-Cu.import("resource://gre/modules/devtools/Console.jsm");
-Cu.import("resource:///modules/gloda/index_msg.js");
-Cu.import("resource:///modules/gloda/mimemsg.js");
 
 const EMAIL_REGEX = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
@@ -33,8 +25,7 @@ const EMAIL_REGEX = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"
 // We want the 'u' flag, which means "User", and only for Email trust.
 const CERT_TRUST = ",Pu,";
 
-
-var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+var console = Services.console;
 
 var GreatDANE = {
   // "Constants"
@@ -42,9 +33,7 @@ var GreatDANE = {
   LOCAL_URL: "http://127.53.5.3:53535/",
 
   // Handle to preferences
-  prefs: Cc["@mozilla.org/preferences-service;1"]
-        .getService(Ci.nsIPrefService)
-        .getBranch("extensions.greatdane."),
+  prefs: Services.prefs.getBranch("extensions.greatdane."),
 
   // Fetches DANE certificates and adds them to Thunderbird's certificate store
   getCerts: function (emailAddress) {
@@ -69,16 +58,6 @@ var GreatDANE = {
       console.logStringMessage("Failed to scrub email address: " + emailAddress);
     }
 
-    // Check if we've already fetched certs for this email address
-    // Note: we may want to remove this "caching" altogether allowing us to use
-    // DANE SMIMEA for live verification of certs (which some people want).
-    /*
-    if (scrubbed in session) {
-      success && success([], scrubbed);
-      return;
-    }
-    */
-
     // Retrieve the currently-configured DANE SMIMEA Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
     //console.logStringMessage("retrieving from engineUrl = " + engineUrl);
@@ -94,7 +73,7 @@ var GreatDANE = {
 
   // Adds a certificate in PEM (base64) form to Thunderbird's cert store
   addCertificate: function (base64cert) {
-    // https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
+    // See: https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
     let certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
 
     let beginCert = "-----BEGIN CERTIFICATE-----";
