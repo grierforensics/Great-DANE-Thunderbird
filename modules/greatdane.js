@@ -30,7 +30,7 @@ var console = Services.console;
 var GreatDANE = {
   // "Constants"
   GRIER_URL: "http://dst.grierforensics.com/toolset/",
-  LOCAL_URL: "http://127.53.5.3:53535/",
+  LOCAL_URL: "http://127.0.0.1:25353/",
 
   // Handle to preferences
   prefs: Services.prefs.getBranch("extensions.greatdane."),
