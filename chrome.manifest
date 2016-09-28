@@ -1,6 +1,4 @@
 content greatdane content/
-skin greatdane classic/1.0 skin/
 resource greatdane modules/
 overlay chrome://messenger/content/messenger.xul chrome://greatdane/content/main.xul
 overlay chrome://messenger/content/messengercompose/messengercompose.xul chrome://greatdane/content/compose.xul
-style chrome://global/content/customizeToolbar.xul chrome://greatdane/content/toolbarButton.css
