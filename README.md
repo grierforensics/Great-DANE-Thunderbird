@@ -8,5 +8,6 @@ If S/MIME encryption is enabled in Thunderbird by default and DANE SMIMEA record
 
 Configure the Great DANE Engine address by navigating to Add-ons -> Great DANE -> Options.
 
+## License
 
-Copyright (C) 2017 Grier Forensics. All Rights Reserved.
+Dual-licensed under Apache License 2.0 and 3-Clause BSD License. See LICENSE.
