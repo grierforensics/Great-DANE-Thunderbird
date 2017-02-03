@@ -1,3 +1,3 @@
-#!/bin/sh
-mkdir build
-zip -r build/greatdane.xpi * --exclude .git/\* --exclude .idea/\* --exclude build/\*
+#!/usr/bin/env sh
+
+zip -r greatdane.xpi chrome.manifest content defaults install.rdf modules README

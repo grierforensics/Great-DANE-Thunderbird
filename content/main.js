@@ -1,5 +1,11 @@
-// (C) Copyright 2015 Grier Forensics.  All rights reserved.
+// (C) Copyright 2017 Grier Forensics. All rights reserved.
 
+/**
+ * Registers mail listener that retrieves DANE certificates
+ * for sender of all new messages.
+ *
+ * Spawns options message on first run.
+ */
 (function () {
   const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 

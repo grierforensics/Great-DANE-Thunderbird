@@ -3,10 +3,9 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>greatdane@grierforensics.com</em:id>
-    <em:version>0.1</em:version>
-
-    <!-- Front End MetaData -->
     <em:name>Great DANE</em:name>
+    <em:type>2</em:type>
+    <em:version>1.0</em:version>
     <em:description>Retrieve DANE Certificates for Encryption/Signing</em:description>
     <em:optionsURL>chrome://greatdane/content/options.xul</em:optionsURL>
     <em:creator>Grier Forensics</em:creator>
@@ -15,7 +14,7 @@
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
         <em:minVersion>3.1</em:minVersion>
-        <em:maxVersion>72.0</em:maxVersion>
+        <em:maxVersion>54.0</em:maxVersion>
       </Description>
     </em:targetApplication>
 

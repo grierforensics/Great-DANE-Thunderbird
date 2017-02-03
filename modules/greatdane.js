@@ -1,4 +1,4 @@
-// (C) Copyright 2015 Grier Forensics.  All rights reserved.
+// (C) Copyright 2017 Grier Forensics.  All rights reserved.
 
 "use strict";
 
@@ -32,10 +32,10 @@ var GreatDANE = {
   GRIER_URL: "http://dst.grierforensics.com/toolset/",
   LOCAL_URL: "http://127.0.0.1:25353/",
 
-  // Handle to preferences
+  /** Handle to preferences */
   prefs: Services.prefs.getBranch("extensions.greatdane."),
 
-  // Fetches DANE certificates and adds them to Thunderbird's certificate store
+  /** Fetches DANE certificates and adds them to Thunderbird's certificate store. */
   getCerts: function (emailAddress) {
     var self = this;
 
@@ -51,7 +51,8 @@ var GreatDANE = {
     );
   },
 
-  // Fetches DANE certs from configured dst webapp. The callback will be passed an array of PEM certs.
+  /** Fetches DANE certs from configured dst webapp.
+   * The callback will be passed an array of PEM certs. */
   fetchCertsForEmailAddress: function (emailAddress, success, failure) {
     var scrubbed = this.scrubEmailAddress(emailAddress);
     if (!scrubbed) {
@@ -71,7 +72,7 @@ var GreatDANE = {
     });
   },
 
-  // Adds a certificate in PEM (base64) form to Thunderbird's cert store
+  /** Adds a certificate in PEM (base64) form to Thunderbird's cert store */
   addCertificate: function (base64cert) {
     // See: https://mike.kaply.com/2015/02/10/installing-certificates-into-firefox/
     let certdb = Cc["@mozilla.org/security/x509certdb;1"].getService(Ci.nsIX509CertDB);
@@ -85,7 +86,7 @@ var GreatDANE = {
     certdb.addCertFromBase64(cert, CERT_TRUST, "");
   },
 
-  // Extracts a valid email address from an "author" string
+  /** Extracts a valid email address from an "author" string */
   scrubEmailAddress: function (emailAddress) {
     if (!emailAddress || emailAddress.length <= 6) {
       return null;
@@ -95,6 +96,7 @@ var GreatDANE = {
     return EMAIL_REGEX.test(result) ? result : null;
   },
 
+  /** Test connection to Great DANE Engine */
   testConnection: function (onSuccess, onFailure) {
     // Retrieve the currently-configured DANE SMIMEA Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");

@@ -1,4 +1,4 @@
-// (C) Copyright 2016 Grier Forensics.  All rights reserved.
+// (C) Copyright 2017 Grier Forensics. All rights reserved.
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 const Cu = Components.utils;
