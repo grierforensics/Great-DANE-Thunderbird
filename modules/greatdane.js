@@ -63,7 +63,7 @@ var GreatDANE = {
     let engineUrl = this.prefs.getCharPref("engine_url");
     //console.logStringMessage("retrieving from engineUrl = " + engineUrl);
 
-    let url = engineUrl + "/" + encodeURIComponent(scrubbed) + '/pem';
+    let url = this.cleanUrl(engineUrl + "/" + encodeURIComponent(scrubbed) + '/pem');
     ajax('GET', url, null, function (responseText) {
       let certs = JSON.parse(responseText);
       success && success(certs, scrubbed);
@@ -100,13 +100,17 @@ var GreatDANE = {
   testConnection: function (onSuccess, onFailure) {
     // Retrieve the currently-configured DANE SMIMEA Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
-    let url = engineUrl + '/ping';
+    let url = this.cleanUrl(engineUrl + '/ping');
     ajax('GET', url, null, function (responseText) {
       onSuccess && onSuccess(responseText);
     }, function (responseText) {
       onFailure && onFailure(responseText);
     },
     2000);
+  },
+
+  cleanUrl: function (url) {
+    return url.replace(/([^:]\/)\/+/g, "$1");
   }
 };
 
