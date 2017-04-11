@@ -59,7 +59,7 @@ var GreatDANE = {
       console.logStringMessage("Failed to scrub email address: " + emailAddress);
     }
 
-    // Retrieve the currently-configured DANE SMIMEA Engine's API URL
+    // Retrieve the currently-configured Great DANE Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
     //console.logStringMessage("retrieving from engineUrl = " + engineUrl);
 
@@ -98,7 +98,7 @@ var GreatDANE = {
 
   /** Test connection to Great DANE Engine */
   testConnection: function (onSuccess, onFailure) {
-    // Retrieve the currently-configured DANE SMIMEA Engine's API URL
+    // Retrieve the currently-configured Great DANE Engine's API URL
     let engineUrl = this.prefs.getCharPref("engine_url");
     let url = this.cleanUrl(engineUrl + '/ping');
     ajax('GET', url, null, function (responseText) {

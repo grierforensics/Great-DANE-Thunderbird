@@ -1,0 +1,16 @@
+body {
+    margin: 3em;
+}
+
+h1 {
+    border-bottom: 1px solid black;
+}
+
+a {
+    color: #0000EE;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

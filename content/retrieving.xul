@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- (C) Copyright 2017 Grier Forensics. All rights reserved.-->
-<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <dialog id="retrieving-dialog" title="Retrieving Certificate(s)"
         xmlns:html="http://www.w3.org/1999/xhtml"

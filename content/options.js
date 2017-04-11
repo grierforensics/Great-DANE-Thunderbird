@@ -11,7 +11,7 @@ var console = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleServic
  * to the "extensions.greatdane.engine_url" preference, which is not directly
  * accessible to the user. Its value depends on whether the user chooses
  * to use the Grier Forensics instance, a local instance, or other remote
- * instance of the DANE SMIMEA Engine.
+ * instance of the Great DANE Engine.
  */
 var GreatDANEOptions = {
     _prefService: null,

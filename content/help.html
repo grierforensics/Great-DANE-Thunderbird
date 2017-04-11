@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Great DANE for Thunderbird</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+   <link rel="stylesheet" type="text/css" href="help.css" />
+</head>
+<body>
+<header>
+<h1 class="title">Great DANE for Thunderbird</h1>
+</header>
+<h2 id="about">About</h2>
+<p>The Great DANE Thunderbird extension integrates the <a href="https://github.com/grierforensics/Great-DANE-Engine">Great DANE Engine</a> with Mozilla Thunderbird.</p>
+<p><strong>NOTE</strong>: Access to a running Great DANE Engine is required to use Great DANE for Thunderbird. See the <a href="https://github.com/grierforensics/Great-DANE-Engine">Great DANE Engine Github page</a> for more information.</p>
+<p>Once configured to communicate with a running Great DANE Engine, the extension will automatically retrieve S/MIME certificates for senders of incoming mail and recipients of outgoing messages.</p>
+<p>If S/MIME encryption is enabled in Thunderbird and DANE SMIMEA records exist for all recipients of an outgoing message, certificate retrieval and storage and message encryption will occur automatically and transparently.</p>
+<h2 id="installing">Installing</h2>
+<p>The easiest way to install Great DANE for Thunderbird is through the Add-ons Manager in Thunderbird. Open <em>Add-ons</em> in Thunderbird and search for “Great DANE”.</p>
+<p>It is also available for download here: <a href="https://addons.mozilla.org/en-US/thunderbird/addon/great-dane-smime/">Great DANE for Thunderbird</a>.</p>
+<p>You can optionally package the Add-on yourself and copy it to to your Thunderbird Profile’s <code>extensions/</code> directory. Simply run <code>package.sh</code>, then copy <code>greatdane.xpi</code> to one of the following locations:</p>
+<ul>
+<li><code>Windows: %APPDATA%\Thunderbird\Profiles\&lt;Profile Name&gt;\extensions\</code></li>
+<li><code>Linux: ~/.thunderbird/&lt;Profile Name&gt;/extensions/</code></li>
+<li><code>OS X: ~/Library/Thunderbird/Profiles/&lt;Profile Name&gt;/extensions/</code></li>
+</ul>
+<p>Configure the Great DANE Engine address by navigating to Add-ons -&gt; Great DANE -&gt; Options.</p>
+<h2 id="license">License</h2>
+<p>Dual-licensed under Apache License 2.0 and 3-Clause BSD License. See LICENSE.</p>
+</body>
+</html>

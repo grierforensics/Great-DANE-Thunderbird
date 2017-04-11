@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <!-- (C) Copyright 2017 Grier Forensics. All rights reserved.-->
-<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://greatdane/skin/custom.css" type="text/css" ?>
 
 <prefwindow
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     id="greatdane-prefs"
-    title="GreatDANE options" >
+    title="Great DANE options" >
 
   <script type="application/x-javascript" src="chrome://greatdane/content/options.js" />
 
@@ -16,7 +17,8 @@
     </preferences>
 
     <groupbox>
-      <caption label="DANE SMIMEA Engine" />
+      <label value="Choose an option below and test your connection:" />
+      <caption label="Great DANE Engine" />
       <radiogroup preference="engine" >
         <grid>
           <columns>
@@ -25,22 +27,31 @@
           </columns>
           <rows>
             <row>
-              <radio id="grier" value="grier" label="Grier Forensics" />
+              <radio id="local" value="local" label="Locally installed instance" />
             </row>
             <row>
-              <radio id="local" value="local" label="Local Instance" />
+              <radio id="grier" value="grier" label="Grier Forensics hosted instance" />
             </row>
             <row>
-              <radio id="remote" value="remote" label="Remote URL" />
+              <radio id="remote" value="remote" label="Other (example: http://example.com:25353/)" />
               <textbox preference="url" id="remoteUrl" />
             </row>
             <row>
-              <button label="Test Connection" oncommand="GreatDANEOptions.testConnection()" />
-              <label id="testConnResults" />
+              <button class="test-connection" label="Test Connection" oncommand="GreatDANEOptions.testConnection()" />
+              <label class="test-connection" id="testConnResults" />
             </row>
           </rows>
         </grid>
       </radiogroup>
     </groupbox>
+
+    <hbox>
+      <label style="text-decoration: underline; color: navy; cursor: pointer" value="Help!"
+        onclick="window.openDialog('chrome://greatdane/content/help.html', '',
+        'all,chrome,dialog=no,status,toolbar');"/>
+      <label style="text-decoration: underline; color: navy; cursor: pointer" value="Install Great DANE Engine"
+        onclick="window.open('https://github.com/grierforensics/Great-DANE-Engine/releases', '',
+        'chrome,dialog=no,menubar,toolbar,location,personalbar,status,resizable')"/>
+    </hbox>
   </prefpane>
 </prefwindow>
