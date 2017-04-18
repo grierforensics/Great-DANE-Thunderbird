@@ -6,4 +6,6 @@ function generate_help() {
 
 type pandoc && generate_help
 
-zip -r greatdane.xpi chrome.manifest content skin defaults install.rdf modules README.md
+version=$(cat VERSION)
+
+zip -r greatdane-$version.xpi chrome.manifest content skin defaults install.rdf modules README.md
