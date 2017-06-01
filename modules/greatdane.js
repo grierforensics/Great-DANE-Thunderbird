@@ -29,7 +29,7 @@ var console = Services.console;
 
 var GreatDANE = {
   // "Constants"
-  GRIER_URL: "http://dst.grierforensics.com/toolset/",
+  GRIER_URL: "https://tools.greatdanenow.com/engine/",
   LOCAL_URL: "http://127.0.0.1:25353/",
 
   /** Handle to preferences */
@@ -51,7 +51,7 @@ var GreatDANE = {
     );
   },
 
-  /** Fetches DANE certs from configured dst webapp.
+  /** Fetches DANE certs from the Great DANE Toolset.
    * The callback will be passed an array of PEM certs. */
   fetchCertsForEmailAddress: function (emailAddress, success, failure) {
     var scrubbed = this.scrubEmailAddress(emailAddress);
@@ -65,7 +65,30 @@ var GreatDANE = {
 
     let url = this.cleanUrl(engineUrl + "/" + encodeURIComponent(scrubbed) + '/pem');
     ajax('GET', url, null, function (responseText) {
-      let certs = JSON.parse(responseText);
+      /*
+      The Great DANE Engine returns a response of the form:
+      {
+        "certificates": [
+          {
+            "data": string (encoded certificate),
+            "ttl": integer (from DNS record),
+            "dnssecValidated": boolean (whether DNSSEC validation was successful),
+            "certificateUsage": integer (as per RFC6698 and RFC8162),
+            "selector": integer (as per RFC6698 and RFC8162),
+            "matchingType": integer (as per RFC6698 and RFC8162)
+          }
+        ]
+      }
+
+      but we are only concerned with the certificate `data` field for now.
+      */
+      let resp = JSON.parse(responseText);
+      let certs = [];
+      if ("certificates" in resp) {
+        for (let idx = 0; idx < resp.certificates.length; idx++) {
+          certs.push(resp.certificates[idx].data);
+        }
+      }
       success && success(certs, scrubbed);
     }, function (responseText) {
       failure && failure(responseText, scrubbed);

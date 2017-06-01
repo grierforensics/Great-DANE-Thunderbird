@@ -5,7 +5,7 @@
     <em:id>greatdane@grierforensics.com</em:id>
     <em:name>Great DANE</em:name>
     <em:type>2</em:type>
-    <em:version>1.0.2</em:version>
+    <em:version>1.1.0</em:version>
     <em:description>Retrieve DANE Certificates for Encryption/Signing</em:description>
     <em:optionsURL>chrome://greatdane/content/options.xul</em:optionsURL>
     <em:creator>Grier Forensics</em:creator>

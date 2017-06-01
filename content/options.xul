@@ -27,10 +27,10 @@
           </columns>
           <rows>
             <row>
-              <radio id="local" value="local" label="Locally installed instance" />
+              <radio id="grier" value="grier" label="Grier Forensics hosted instance" />
             </row>
             <row>
-              <radio id="grier" value="grier" label="Grier Forensics hosted instance" />
+              <radio id="local" value="local" label="Locally installed instance" />
             </row>
             <row>
               <radio id="remote" value="remote" label="Other (example: http://example.com:25353/)" />
