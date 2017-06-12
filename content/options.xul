@@ -51,7 +51,7 @@
         'all,chrome,dialog=no,status,toolbar');"/>
       <label style="text-decoration: underline; color: navy; cursor: pointer" value="Install Great DANE Engine"
         onclick="window.open('https://github.com/grierforensics/Great-DANE-Engine/releases', '',
-        'chrome,dialog=no,menubar,toolbar,location,personalbar,status,resizable')"/>
+        'dialog=no,menubar,toolbar,location,personalbar,status,resizable')"/>
     </hbox>
   </prefpane>
 </prefwindow>
